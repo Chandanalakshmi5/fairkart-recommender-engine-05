@@ -12,8 +12,45 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  const validatePassword = (password: string): boolean => {
+    // Password must be at least 8 characters
+    if (password.length < 8) {
+      setPasswordError('Password must be at least 8 characters');
+      return false;
+    }
+    
+    // Password must contain at least one uppercase letter
+    if (!/[A-Z]/.test(password)) {
+      setPasswordError('Password must contain at least one uppercase letter');
+      return false;
+    }
+    
+    // Password must contain at least one lowercase letter
+    if (!/[a-z]/.test(password)) {
+      setPasswordError('Password must contain at least one lowercase letter');
+      return false;
+    }
+    
+    // Password must contain at least one number
+    if (!/\d/.test(password)) {
+      setPasswordError('Password must contain at least one number');
+      return false;
+    }
+    
+    // Password must contain at least one special character
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      setPasswordError('Password must contain at least one special character');
+      return false;
+    }
+    
+    // Clear any previous password error
+    setPasswordError('');
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +59,14 @@ const Login = () => {
       return;
     }
 
+    // Only validate password length here since we're just logging in
+    if (password.length < 8) {
+      setPasswordError('Password must be at least 8 characters');
+      return;
+    }
+
     setError('');
+    setPasswordError('');
     setIsSubmitting(true);
 
     try {
@@ -90,6 +134,9 @@ const Login = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
+                {passwordError && (
+                  <p className="text-sm text-red-500">{passwordError}</p>
+                )}
               </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">

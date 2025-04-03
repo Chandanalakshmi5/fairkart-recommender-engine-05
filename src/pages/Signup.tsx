@@ -14,13 +14,54 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const { signup } = useAuth();
   const navigate = useNavigate();
+
+  const validatePassword = (password: string): boolean => {
+    // Password must be at least 8 characters
+    if (password.length < 8) {
+      setPasswordError('Password must be at least 8 characters');
+      return false;
+    }
+    
+    // Password must contain at least one uppercase letter
+    if (!/[A-Z]/.test(password)) {
+      setPasswordError('Password must contain at least one uppercase letter');
+      return false;
+    }
+    
+    // Password must contain at least one lowercase letter
+    if (!/[a-z]/.test(password)) {
+      setPasswordError('Password must contain at least one lowercase letter');
+      return false;
+    }
+    
+    // Password must contain at least one number
+    if (!/\d/.test(password)) {
+      setPasswordError('Password must contain at least one number');
+      return false;
+    }
+    
+    // Password must contain at least one special character
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      setPasswordError('Password must contain at least one special character');
+      return false;
+    }
+    
+    // Clear any previous password error
+    setPasswordError('');
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email || !password || !confirmPassword) {
       setError('Please fill in all fields');
+      return;
+    }
+
+    if (!validatePassword(password)) {
       return;
     }
 
@@ -101,6 +142,13 @@ const Signup = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
+                {passwordError && (
+                  <p className="text-sm text-red-500">{passwordError}</p>
+                )}
+                <p className="text-xs text-gray-500">
+                  Password must be at least 8 characters and include uppercase, lowercase, 
+                  number, and special character.
+                </p>
               </div>
 
               <div className="space-y-2">

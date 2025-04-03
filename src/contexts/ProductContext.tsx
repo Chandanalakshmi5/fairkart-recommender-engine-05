@@ -40,9 +40,60 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
     const matchedProducts = products.filter(product => {
       const nameMatch = product.name.toLowerCase().includes(normalizedQuery);
       const batteryMatch = product.batteryCapacity.toLowerCase().includes(normalizedQuery);
-      const ramMatch = product.ram.some(ram => ram.toLowerCase().includes(normalizedQuery));
-      const storageMatch = product.storage.some(storage => storage.toLowerCase().includes(normalizedQuery));
-      const priceMatch = product.price.toString().includes(normalizedQuery);
+      
+      // Improved RAM matching - check for specific RAM sizes
+      const ramMatch = product.ram.some(ram => {
+        const ramValue = ram.toLowerCase();
+        
+        // Check for exact RAM size match
+        if (ramValue === normalizedQuery) return true;
+        
+        // Check for RAM size with "gb" suffix
+        if (normalizedQuery.includes("gb")) {
+          const ramSize = normalizedQuery.replace("gb", "").trim();
+          return ramValue.includes(ramSize + "gb") || ramValue.includes(ramSize + " gb");
+        }
+        
+        return ramValue.includes(normalizedQuery);
+      });
+      
+      // Improved storage matching
+      const storageMatch = product.storage.some(storage => {
+        const storageValue = storage.toLowerCase();
+        
+        // Check for exact storage size match
+        if (storageValue === normalizedQuery) return true;
+        
+        // Check for storage size with "gb" suffix
+        if (normalizedQuery.includes("gb")) {
+          const storageSize = normalizedQuery.replace("gb", "").trim();
+          return storageValue.includes(storageSize + "gb") || storageValue.includes(storageSize + " gb");
+        }
+        
+        return storageValue.includes(normalizedQuery);
+      });
+      
+      // Improved price matching for ranges like "below 20000"
+      let priceMatch = product.price.toString().includes(normalizedQuery);
+      
+      // Handle price range queries
+      if (normalizedQuery.includes("below") || normalizedQuery.includes("under")) {
+        const priceThreshold = extractNumberFromString(normalizedQuery);
+        if (priceThreshold > 0) {
+          priceMatch = product.price < priceThreshold;
+        }
+      } else if (normalizedQuery.includes("above") || normalizedQuery.includes("over")) {
+        const priceThreshold = extractNumberFromString(normalizedQuery);
+        if (priceThreshold > 0) {
+          priceMatch = product.price > priceThreshold;
+        }
+      } else if (normalizedQuery.includes("between")) {
+        const numbers = extractNumbersFromString(normalizedQuery);
+        if (numbers.length >= 2) {
+          const [min, max] = numbers.sort((a, b) => a - b);
+          priceMatch = product.price >= min && product.price <= max;
+        }
+      }
       
       return nameMatch || batteryMatch || ramMatch || storageMatch || priceMatch;
     });
@@ -150,6 +201,24 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
     }
     
     return finalRankedProducts;
+  };
+
+  // Helper function to extract a number from a string like "below 20000"
+  const extractNumberFromString = (str: string): number => {
+    const matches = str.match(/\d+/g);
+    if (matches && matches.length > 0) {
+      return parseInt(matches[0], 10);
+    }
+    return 0;
+  };
+
+  // Helper function to extract multiple numbers from a string like "between 10000 and 20000"
+  const extractNumbersFromString = (str: string): number[] => {
+    const matches = str.match(/\d+/g);
+    if (matches) {
+      return matches.map(match => parseInt(match, 10));
+    }
+    return [];
   };
 
   const getProductById = (id: string) => {
