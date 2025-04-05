@@ -6,7 +6,7 @@ export const productData: Product[] = [
     id: '1',
     name: 'Realme 10 Pro+',
     price: 19999,
-    image: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=500',
     rating: 4.2,
     batteryCapacity: '5000 mAh',
     storage: ['128GB', '256GB'],
@@ -17,7 +17,7 @@ export const productData: Product[] = [
     id: '2',
     name: 'Redmi Note 12 Pro+',
     price: 22999,
-    image: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1546054454-aa26e2b734c7?q=80&w=500',
     rating: 4.1,
     batteryCapacity: '4980 mAh',
     storage: ['128GB', '256GB'],
@@ -28,7 +28,7 @@ export const productData: Product[] = [
     id: '3',
     name: 'Poco F4 GT',
     price: 26999,
-    image: 'https://images.unsplash.com/photo-1609081219090-a6d81d3085bf?q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?q=80&w=500',
     rating: 4.3,
     batteryCapacity: '4700 mAh',
     storage: ['128GB', '256GB'],
@@ -39,7 +39,7 @@ export const productData: Product[] = [
     id: '4',
     name: 'OnePlus Nord CE 3 Lite',
     price: 17999,
-    image: 'https://images.unsplash.com/photo-1616348436168-de43ad0db179?q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1585060544812-6b45742d762f?q=80&w=500',
     rating: 4.0,
     batteryCapacity: '5000 mAh',
     storage: ['128GB', '256GB'],
@@ -50,7 +50,7 @@ export const productData: Product[] = [
     id: '5',
     name: 'Motorola Edge 30',
     price: 21999,
-    image: 'https://images.unsplash.com/photo-1584006682522-dc17d6c0d9ac?q=80&w=500',
+    image: 'https://images.unsplash.com/photo-1605457212292-2e00f075deec?q=80&w=500',
     rating: 3.9,
     batteryCapacity: '4020 mAh',
     storage: ['128GB', '256GB'],
@@ -311,3 +311,4 @@ export const productData: Product[] = [
     description: 'Sony Xperia 1 IV offers professional-grade camera features, a 4K OLED display, and powerful performance for content creators.'
   }
 ];
+
