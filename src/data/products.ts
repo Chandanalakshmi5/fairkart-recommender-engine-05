@@ -1,4 +1,3 @@
-
 import { Product } from '../types/product';
 
 export const productData: Product[] = [
@@ -6,7 +5,7 @@ export const productData: Product[] = [
     id: '1',
     name: 'Realme 10 Pro+',
     price: 19999,
-    image: 'https://m.media-amazon.com/images/I/41BnHB+svCL._AC_UF1000,1000_QL80_.jpg',
+    image: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7',
     rating: 4.2,
     batteryCapacity: '5000 mAh',
     storage: ['128GB', '256GB'],
@@ -17,7 +16,7 @@ export const productData: Product[] = [
     id: '2',
     name: 'Redmi Note 12 Pro+',
     price: 22999,
-    image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-12-pro-plus.jpg',
+    image: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b',
     rating: 4.1,
     batteryCapacity: '4980 mAh',
     storage: ['128GB', '256GB'],
@@ -200,12 +199,11 @@ export const productData: Product[] = [
     ram: ['8GB'],
     description: 'OnePlus Nord 3 offers a premium mid-range experience with a 4500 mAh battery, OnePlus fast charging, and smooth OxygenOS interface.'
   },
-  // Adding new phones with images
   {
     id: '19',
     name: 'Samsung Galaxy S23',
     price: 64999,
-    image: 'https://images.samsung.com/is/image/samsung/p6pim/in/2302/gallery/in-galaxy-s23-s911-sm-s911bzgcins-534863401',
+    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475',
     rating: 4.7,
     batteryCapacity: '3900 mAh',
     storage: ['128GB', '256GB', '512GB'],
@@ -216,7 +214,7 @@ export const productData: Product[] = [
     id: '20',
     name: 'iPhone 14',
     price: 69999,
-    image: 'https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-14-storage-select-202209-6-1inch-blue?wid=2560&hei=1440&fmt=p-jpg&qlt=80&.v=1660691589526',
+    image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6',
     rating: 4.8,
     batteryCapacity: '3279 mAh',
     storage: ['128GB', '256GB', '512GB'],
@@ -288,5 +286,30 @@ export const productData: Product[] = [
     storage: ['256GB', '512GB'],
     ram: ['8GB', '12GB'],
     description: 'Xiaomi 13 Pro features Leica optics, flagship Snapdragon processor, fast charging capabilities, and premium flagship experience.'
+  },
+  {
+    id: '27',
+    name: 'Huawei P50 Pro',
+    price: 59999,
+    image: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d',
+    rating: 4.5,
+    batteryCapacity: '4360 mAh',
+    storage: ['256GB', '512GB'],
+    ram: ['8GB', '12GB'],
+    description: 'Huawei P50 Pro delivers exceptional photography capabilities with Leica optics and top-tier performance in a sleek design.'
+  },
+  {
+    id: '28',
+    name: 'Sony Xperia 1 IV',
+    price: 74999,
+    image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158',
+    rating: 4.3,
+    batteryCapacity: '5000 mAh',
+    storage: ['256GB', '512GB'],
+    ram: ['12GB', '16GB'],
+    description: 'Sony Xperia 1 IV offers professional-grade camera features, a 4K OLED display, and powerful performance for content creators.'
   }
-];
+].map(product => ({
+  ...product,
+  image: product.image || `https://images.unsplash.com/photo-${Math.floor(Math.random() * 100000)}`
+}));
