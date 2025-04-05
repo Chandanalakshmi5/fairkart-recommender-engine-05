@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, ShoppingCart, Star } from 'lucide-react';
+import { Heart, ShoppingCart, Star, ImageOff } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Product } from '../types/product';
@@ -16,6 +16,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const [isHovered, setIsHovered] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const navigate = useNavigate();
   
   const inWishlist = isInWishlist(product.id);
@@ -24,6 +25,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
     addToCart(product);
     navigate('/checkout');
   };
+
+  const handleImageError = () => {
+    console.log(`Image failed to load for product: ${product.name}`);
+    setImageError(true);
+  };
   
   return (
     <Card 
@@ -31,13 +37,22 @@ const ProductCard = ({ product }: ProductCardProps) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative overflow-hidden h-48">
+      <div className="relative overflow-hidden h-48 bg-gray-50 flex items-center justify-center">
         <Link to={`/product/${product.id}`}>
-          <img 
-            src={product.image} 
-            alt={product.name} 
-            className={`w-full h-full object-contain transition-transform duration-300 ${isHovered ? 'scale-110' : 'scale-100'}`}
-          />
+          {!imageError ? (
+            <img 
+              src={product.image} 
+              alt={product.name} 
+              className={`w-full h-full object-contain transition-transform duration-300 ${isHovered ? 'scale-110' : 'scale-100'}`}
+              onError={handleImageError}
+              loading="lazy"
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center text-gray-400 w-full h-full">
+              <ImageOff size={32} />
+              <span className="mt-2 text-sm">{product.name}</span>
+            </div>
+          )}
         </Link>
         
         <button 

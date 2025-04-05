@@ -1,11 +1,9 @@
 
 import { useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Heart, ShoppingCart, Check, Star, ChevronRight } from 'lucide-react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Heart, ShoppingCart, ArrowLeft, Star, Battery, Memory, HardDrive, ImageOff } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
+import { Separator } from "@/components/ui/separator";
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useProducts } from '../contexts/ProductContext';
@@ -18,11 +16,7 @@ const ProductDetail = () => {
   const { getProductById } = useProducts();
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
-  const { toast } = useToast();
-  
-  const [selectedStorage, setSelectedStorage] = useState<string | null>(null);
-  const [selectedRAM, setSelectedRAM] = useState<string | null>(null);
-  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [imageError, setImageError] = useState(false);
   
   const product = getProductById(id || '');
   
@@ -33,8 +27,12 @@ const ProductDetail = () => {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center p-6">
             <h2 className="text-2xl font-bold mb-2">Product Not Found</h2>
-            <p className="text-gray-600 mb-4">The product you're looking for doesn't exist or has been removed.</p>
-            <Button onClick={() => navigate('/home')}>Return to Home</Button>
+            <p className="text-gray-600 mb-6">
+              The product you are looking for does not exist or has been removed.
+            </p>
+            <Button onClick={() => navigate('/home')}>
+              Go Back to Home
+            </Button>
           </div>
         </div>
         <Footer />
@@ -42,272 +40,147 @@ const ProductDetail = () => {
     );
   }
   
-  const inWishlist = isInWishlist(product.id);
-  
-  const handleAddToCart = () => {
-    addToCart(product);
-  };
-  
   const handleBuyNow = () => {
     addToCart(product);
-    setShowSuccessDialog(true);
-    
-    // Show toast notification
-    toast({
-      title: "Order Placed Successfully!",
-      description: "Your order will be delivered within 4 days.",
-    });
-    
-    // Navigate to order confirmation after a short delay to show the dialog
-    setTimeout(() => {
-      setShowSuccessDialog(false);
-      navigate('/order-confirmation');
-    }, 2000);
+    navigate('/checkout');
   };
+
+  const handleImageError = () => {
+    console.log(`Image failed to load for product detail: ${product.name}`);
+    setImageError(true);
+  };
+  
+  const inWishlist = isInWishlist(product.id);
   
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="mb-4">
-          <nav className="flex">
-            <Link to="/home" className="text-gray-500 hover:text-primary">Home</Link>
-            <ChevronRight size={16} className="mx-2 text-gray-400" />
-            <span className="text-gray-700">Product</span>
-          </nav>
-        </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => navigate(-1)}
+          className="mb-6"
+        >
+          <ArrowLeft size={16} className="mr-2" />
+          Back
+        </Button>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image */}
-          <div className="bg-white rounded-lg p-8 flex items-center justify-center border">
-            <img 
-              src={product.image} 
-              alt={product.name}
-              className="max-h-[400px] object-contain"
-            />
+          <div className="bg-gray-50 rounded-lg p-8 flex items-center justify-center h-[400px] md:sticky md:top-24">
+            {!imageError ? (
+              <img 
+                src={product.image} 
+                alt={product.name} 
+                className="max-h-full max-w-full object-contain" 
+                onError={handleImageError}
+                loading="eager"
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center text-gray-400">
+                <ImageOff size={64} />
+                <span className="mt-4 text-lg">Image not available</span>
+              </div>
+            )}
           </div>
           
-          {/* Product Details */}
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold">{product.name}</h1>
+          {/* Product Info */}
+          <div className="flex flex-col">
+            <h1 className="text-2xl md:text-3xl font-bold">{product.name}</h1>
+            
+            <div className="flex items-center mt-2 mb-4">
+              <div className="flex items-center text-yellow-500">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    size={18}
+                    className={`${
+                      i < Math.floor(product.rating) ? 'fill-yellow-500' : 'fill-gray-200 text-gray-200'
+                    }`}
+                  />
+                ))}
+              </div>
+              <span className="ml-2 text-sm text-gray-600">{product.rating.toFixed(1)} out of 5</span>
+            </div>
+            
+            <div className="text-3xl font-bold mb-6">
+              ₹{product.price.toLocaleString()}
+            </div>
+            
+            <Separator className="my-4" />
+            
+            <div className="space-y-4 mb-6">
+              <h2 className="text-xl font-semibold">Key Features</h2>
               
-              <div className="flex items-center mt-2">
-                <div className="flex items-center text-yellow-500 mr-2">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      size={18}
-                      className={`${
-                        i < Math.floor(product.rating) ? 'fill-yellow-500' : 'fill-gray-200 text-gray-200'
-                      } ${
-                        i === Math.floor(product.rating) && product.rating % 1 > 0
-                          ? 'fill-gradient-right'
-                          : ''
-                      }`}
-                    />
-                  ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center">
+                  <Battery size={20} className="text-gray-400 mr-2" />
+                  <div>
+                    <span className="text-sm text-gray-600">Battery</span>
+                    <p className="font-medium">{product.batteryCapacity}</p>
+                  </div>
                 </div>
-                <span className="text-gray-500">({product.rating.toFixed(1)})</span>
-              </div>
-            </div>
-            
-            <div className="border-t border-b py-4">
-              <div className="text-3xl font-bold text-primary">₹{product.price.toLocaleString()}</div>
-              <div className="text-sm text-gray-500 mt-1">Inclusive of all taxes</div>
-            </div>
-            
-            <div>
-              <h3 className="font-medium mb-2">Key Features:</h3>
-              <ul className="space-y-2">
-                <li className="flex items-start">
-                  <Check size={18} className="text-green-500 mr-2 mt-0.5" />
-                  <span>Battery Capacity: {product.batteryCapacity}</span>
-                </li>
-                <li className="flex items-start">
-                  <Check size={18} className="text-green-500 mr-2 mt-0.5" />
-                  <span>Available Storage: {product.storage.join(', ')}</span>
-                </li>
-                <li className="flex items-start">
-                  <Check size={18} className="text-green-500 mr-2 mt-0.5" />
-                  <span>RAM Configurations: {product.ram.join(', ')}</span>
-                </li>
-              </ul>
-            </div>
-            
-            {/* Configuration Options */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-medium mb-2">Storage:</h3>
-                <div className="flex flex-wrap gap-2">
-                  {product.storage.map(storage => (
-                    <Button
-                      key={storage}
-                      variant={selectedStorage === storage ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedStorage(storage)}
-                    >
-                      {storage}
-                    </Button>
-                  ))}
+                
+                <div className="flex items-center">
+                  <Memory size={20} className="text-gray-400 mr-2" />
+                  <div>
+                    <span className="text-sm text-gray-600">RAM Options</span>
+                    <p className="font-medium">{product.ram.join(', ')}</p>
+                  </div>
                 </div>
-              </div>
-              
-              <div>
-                <h3 className="font-medium mb-2">RAM:</h3>
-                <div className="flex flex-wrap gap-2">
-                  {product.ram.map(ram => (
-                    <Button
-                      key={ram}
-                      variant={selectedRAM === ram ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedRAM(ram)}
-                    >
-                      {ram}
-                    </Button>
-                  ))}
+                
+                <div className="flex items-center col-span-full">
+                  <HardDrive size={20} className="text-gray-400 mr-2" />
+                  <div>
+                    <span className="text-sm text-gray-600">Storage Options</span>
+                    <p className="font-medium">{product.storage.join(', ')}</p>
+                  </div>
                 </div>
               </div>
             </div>
             
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-2">Description</h2>
+              <p className="text-gray-700">
+                {product.description}
+              </p>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 mt-auto">
+              <Button 
                 variant="outline"
-                size="lg"
-                className="flex-1 gap-2"
+                className={`flex-1 gap-2 ${
+                  inWishlist ? 'bg-red-50 text-red-600 border-red-300' : ''
+                }`}
                 onClick={() => toggleWishlist(product)}
               >
-                <Heart size={20} className={inWishlist ? 'fill-red-500 text-red-500' : ''} />
-                {inWishlist ? 'Added to Wishlist' : 'Add to Wishlist'}
+                <Heart size={20} className={inWishlist ? 'fill-red-500' : ''} />
+                {inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
               </Button>
               
-              <Button
-                onClick={handleAddToCart}
-                size="lg"
+              <Button 
                 className="flex-1 gap-2"
+                onClick={() => addToCart(product)}
               >
                 <ShoppingCart size={20} />
                 Add to Cart
               </Button>
-              
-              <Button
-                onClick={handleBuyNow}
-                variant="secondary"
-                size="lg"
-                className="flex-1"
-              >
-                Buy Now
-              </Button>
             </div>
+            
+            <Button 
+              variant="secondary" 
+              className="w-full mt-4"
+              onClick={handleBuyNow}
+            >
+              Buy Now
+            </Button>
           </div>
-        </div>
-        
-        {/* Product Description and Specs */}
-        <div className="mt-8">
-          <Tabs defaultValue="description">
-            <TabsList className="mb-4">
-              <TabsTrigger value="description">Description</TabsTrigger>
-              <TabsTrigger value="specifications">Specifications</TabsTrigger>
-              <TabsTrigger value="reviews">Reviews</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="description" className="p-6 border rounded-lg">
-              <p className="text-gray-700">{product.description}</p>
-            </TabsContent>
-            
-            <TabsContent value="specifications" className="p-6 border rounded-lg">
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <h3 className="font-medium text-lg mb-2">Basic Information</h3>
-                    <ul className="space-y-2">
-                      <li className="flex justify-between">
-                        <span className="text-gray-600">Brand</span>
-                        <span className="font-medium">{product.name.split(' ')[0]}</span>
-                      </li>
-                      <li className="flex justify-between">
-                        <span className="text-gray-600">Model</span>
-                        <span className="font-medium">{product.name}</span>
-                      </li>
-                    </ul>
-                  </div>
-                  
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <h3 className="font-medium text-lg mb-2">Battery & Power</h3>
-                    <ul className="space-y-2">
-                      <li className="flex justify-between">
-                        <span className="text-gray-600">Battery Capacity</span>
-                        <span className="font-medium">{product.batteryCapacity}</span>
-                      </li>
-                      <li className="flex justify-between">
-                        <span className="text-gray-600">Fast Charging</span>
-                        <span className="font-medium">Yes</span>
-                      </li>
-                    </ul>
-                  </div>
-                  
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <h3 className="font-medium text-lg mb-2">Storage</h3>
-                    <ul className="space-y-2">
-                      <li className="flex justify-between">
-                        <span className="text-gray-600">Internal Storage</span>
-                        <span className="font-medium">{product.storage.join(', ')}</span>
-                      </li>
-                      <li className="flex justify-between">
-                        <span className="text-gray-600">Expandable Storage</span>
-                        <span className="font-medium">Yes (Up to 1TB)</span>
-                      </li>
-                    </ul>
-                  </div>
-                  
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <h3 className="font-medium text-lg mb-2">Memory</h3>
-                    <ul className="space-y-2">
-                      <li className="flex justify-between">
-                        <span className="text-gray-600">RAM</span>
-                        <span className="font-medium">{product.ram.join(', ')}</span>
-                      </li>
-                      <li className="flex justify-between">
-                        <span className="text-gray-600">RAM Type</span>
-                        <span className="font-medium">LPDDR5</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="reviews" className="p-6 border rounded-lg">
-              <div className="text-center py-8">
-                <h3 className="text-lg font-medium mb-2">No reviews yet</h3>
-                <p className="text-gray-500">Be the first to review this product</p>
-              </div>
-            </TabsContent>
-          </Tabs>
         </div>
       </main>
       
       <Footer />
-      
-      {/* Success Dialog */}
-      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-center flex flex-col items-center">
-              <div className="bg-green-100 p-3 rounded-full mb-3">
-                <Check className="h-6 w-6 text-green-600" />
-              </div>
-              Order Confirmed!
-            </DialogTitle>
-          </DialogHeader>
-          <div className="text-center py-4">
-            <p className="text-gray-700 mb-2">Your order has been placed successfully!</p>
-            <p className="text-gray-600">Expected delivery within 4 days.</p>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
