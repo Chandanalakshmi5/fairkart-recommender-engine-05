@@ -58,10 +58,10 @@ const ProductDetail = () => {
       description: "Your order will be delivered within 4 days.",
     });
     
-    // Navigate to checkout after a short delay to show the dialog
+    // Navigate to order confirmation after a short delay to show the dialog
     setTimeout(() => {
       setShowSuccessDialog(false);
-      navigate('/checkout');
+      navigate('/order-confirmation');
     }, 2000);
   };
   

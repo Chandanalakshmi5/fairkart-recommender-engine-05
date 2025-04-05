@@ -19,6 +19,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Wishlist from "./pages/Wishlist";
 import Checkout from "./pages/Checkout";
+import OrderConfirmation from "./pages/OrderConfirmation";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +82,14 @@ const App = () => (
                     element={
                       <ProtectedRoute>
                         <Checkout />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/order-confirmation" 
+                    element={
+                      <ProtectedRoute>
+                        <OrderConfirmation />
                       </ProtectedRoute>
                     } 
                   />
