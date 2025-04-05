@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Heart, ShoppingCart, Star } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,8 +16,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
   
   const inWishlist = isInWishlist(product.id);
+  
+  const handleBuyNow = () => {
+    addToCart(product);
+    navigate('/checkout');
+  };
   
   return (
     <Card 
@@ -91,6 +97,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <span className="hidden sm:inline">Add</span>
           </Button>
         </div>
+        
+        <Button 
+          variant="secondary" 
+          className="w-full mt-2" 
+          onClick={handleBuyNow}
+        >
+          Buy Now
+        </Button>
       </CardContent>
     </Card>
   );

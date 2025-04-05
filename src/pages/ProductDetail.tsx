@@ -4,6 +4,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Heart, ShoppingCart, Check, Star, ChevronRight } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useProducts } from '../contexts/ProductContext';
@@ -16,9 +18,11 @@ const ProductDetail = () => {
   const { getProductById } = useProducts();
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const { toast } = useToast();
   
   const [selectedStorage, setSelectedStorage] = useState<string | null>(null);
   const [selectedRAM, setSelectedRAM] = useState<string | null>(null);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   
   const product = getProductById(id || '');
   
@@ -46,7 +50,19 @@ const ProductDetail = () => {
   
   const handleBuyNow = () => {
     addToCart(product);
-    navigate('/checkout');
+    setShowSuccessDialog(true);
+    
+    // Show toast notification
+    toast({
+      title: "Order Placed Successfully!",
+      description: "Your order will be delivered within 4 days.",
+    });
+    
+    // Navigate to checkout after a short delay to show the dialog
+    setTimeout(() => {
+      setShowSuccessDialog(false);
+      navigate('/checkout');
+    }, 2000);
   };
   
   return (
@@ -274,6 +290,24 @@ const ProductDetail = () => {
       </main>
       
       <Footer />
+      
+      {/* Success Dialog */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center flex flex-col items-center">
+              <div className="bg-green-100 p-3 rounded-full mb-3">
+                <Check className="h-6 w-6 text-green-600" />
+              </div>
+              Order Confirmed!
+            </DialogTitle>
+          </DialogHeader>
+          <div className="text-center py-4">
+            <p className="text-gray-700 mb-2">Your order has been placed successfully!</p>
+            <p className="text-gray-600">Expected delivery within 4 days.</p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
