@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Heart, ShoppingCart, ArrowLeft, Star, Battery, Memory, HardDrive, ImageOff } from 'lucide-react';
+import { Heart, ShoppingCart, ArrowLeft, Star, Battery, Chip, HardDrive, ImageOff } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Header from '../components/Header';
@@ -124,7 +124,7 @@ const ProductDetail = () => {
                 </div>
                 
                 <div className="flex items-center">
-                  <Memory size={20} className="text-gray-400 mr-2" />
+                  <Chip size={20} className="text-gray-400 mr-2" />
                   <div>
                     <span className="text-sm text-gray-600">RAM Options</span>
                     <p className="font-medium">{product.ram.join(', ')}</p>
