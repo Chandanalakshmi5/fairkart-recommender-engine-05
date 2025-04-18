@@ -1,3 +1,4 @@
+
 import { Product } from '../types/product';
 
 export const productData: Product[] = [
@@ -269,7 +270,7 @@ export const productData: Product[] = [
     id: '25',
     name: 'Asus ROG Phone 7',
     price: 74999,
-    image: 'https://images.unsplash.com/photo-1550317138-10000687a72b?q=80&w=500',
+    image: 'https://i.imgur.com/uOjOZat.png', // New image for ROG Phone 7
     rating: 4.5,
     batteryCapacity: '6000 mAh',
     storage: ['256GB', '512GB'],
