@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Heart, ShoppingCart, Star, ImageOff } from 'lucide-react';
@@ -29,6 +30,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
     console.log(`Image failed to load for product: ${product.name}`);
     setImageError(true);
   };
+
+  // Fallback image from Unsplash if the original image fails to load
+  const fallbackImage = `https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=600`;
   
   return (
     <Card 
@@ -47,9 +51,20 @@ const ProductCard = ({ product }: ProductCardProps) => {
               loading="lazy"
             />
           ) : (
-            <div className="flex flex-col items-center justify-center text-gray-400 w-full h-full">
-              <ImageOff size={32} />
-              <span className="mt-2 text-sm">{product.name}</span>
+            <div className="w-full h-full">
+              <img 
+                src={fallbackImage} 
+                alt={product.name} 
+                className={`w-full h-full object-cover transition-transform duration-300 ${isHovered ? 'scale-110' : 'scale-100'}`}
+                onError={() => {
+                  // If even the fallback image fails, show the text fallback
+                  console.log(`Fallback image also failed for: ${product.name}`);
+                }}
+                loading="lazy"
+              />
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white">
+                <span className="text-lg font-medium">{product.name}</span>
+              </div>
             </div>
           )}
         </Link>
